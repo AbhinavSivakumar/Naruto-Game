@@ -1,0 +1,2463 @@
+#include<fstream.h>
+#include<conio.h>
+#include<stdlib.h>
+#include<math.h>
+#include<stdio.h>
+#include<process.h>
+#include<graphics.h>
+#include<dos.h>
+#include<string.h>
+#include<iomanip.h>
+//hps
+// lvl1hp 100
+// lvl2hp 150
+// lvl3hp 200
+// lvl4hp 250
+
+////s of attacks in order
+
+//lvl attacks
+// lvl1_1 10
+// lvl1_2 15
+// lvl1_3 25
+// lvl1_4 50
+// lvl2_1 20
+// lvl2_2 25
+// lvl2_3 35
+// lvl2_4 70
+// lvl3_1 35
+// lvl3_2 45
+// lvl3_3 60
+// lvl3_4 100
+// lvl4_1 50
+// lvl4_2 75
+// lvl4_3 90
+// lvl4_4 150
+
+//prototypes
+void check(char uid[],char pwd[],int opt);
+void login();
+void sign_up();
+void enterpwd();
+void battle();
+void admin_options();
+
+//////////////////////////////////////////////////
+
+class player
+{
+	char uid[10];
+	char pwd[10];
+	int char_lvl;
+	int exp;
+	int chakra;
+	int hp;
+public:
+	int atk1;
+	int atk2;
+	int atk3;
+	int atk4;
+	player()
+	{
+		hp=0;
+		chakra=0;
+	}
+	void show()
+	{
+		cout<<setw(15)<<uid<<setw(5)<<exp<<endl;
+	}
+	void adminexp(int x)
+	{
+		exp=x;
+	}
+	void setexp()
+	{
+		exp+=50;
+	}
+	int getchakra()
+	{
+		return chakra;
+	}
+	void setchakra(int s)
+	{
+		chakra=s;
+	}
+	void inc_chakra(int s)
+	{
+		chakra+=s;
+	}
+	void changechakra(int a)
+	{
+		chakra-=a;
+	}
+	void setlvl(int s)
+	{
+		char_lvl=s;
+	}
+	int getlvl()
+	{
+		return char_lvl;
+	}
+	void putuid(char username[])
+	{
+		strcpy(uid,username);
+	}
+	void putpwd(char password[])
+	{
+		strcpy(pwd,password);
+	}
+	int getexp()
+	{
+		return exp;
+	}
+	void createexp()
+	{
+		exp=0;
+	}
+	void sethp(int s)
+	{
+		hp=s;
+	}
+	int gethp()
+	{
+		return hp;
+	}
+	char* getuid()
+	{
+		return uid;
+	}
+	char* getpwd()
+	{
+		return pwd;
+	}
+}player1,player2,admin;
+
+char *fname[] = { "DEFAULT font",
+		  "TRIPLEX font",
+		  "SMALL font",
+		  "SANS SERIF font",
+		  "GOTHIC font"
+		};
+void battle_gr()
+{
+	line(0,330,639,330);
+	line(637,330,637,490);
+	line(0,330,0,479);
+	line(0,479,639,479);
+	line(639,330,639,479);
+	line(319,330,319,479);
+	line(320,330,320,479);
+	line(160,330,160,476);
+	line(500,330,500,500);
+	line(0,404,319,404);
+	line(362,404,650,404);
+	line(360,330,360,479);
+	line(361,330,361,479);
+	line(319,331,360,331);
+	line(319,478,360,478);
+	//player 1
+	//face
+	circle(100,190,15);
+	//neck
+	line(95,204,95,212);
+	line(105,204,105,212);
+	//torso
+	line(80,212,120,212);
+	line(85,230,85,270);
+	line(115,230,115,270);
+	line(85,270,115,270);
+	//legs
+	line(100,288,115,330);
+	line(115,270,130,330);
+	line(100,288,85,330);
+	line(85,270,70,330);
+	//hands
+	line(85,230,71,278);
+	line(80,212,65,276);
+	circle(67,281,5);
+
+	line(115,230,125,255);
+	line(120,212,128,240);
+	line(125,255,145,236);
+	line(128,240,140,230);
+	circle(146,230,5);
+	//kunai
+	line(146,224,146,223);
+	line(148,226,148,223);
+	circle(147,220,3);
+	line(147,220,147,220);
+
+	line(146,236,146,239);
+	line(148,236,148,239);
+	line(146,239,144,243);
+	line(148,239,150,243);
+	line(144,243,147,258);
+	line(150,243,147,258);
+
+	//player2
+	//face
+	circle(500,190,15);
+	//neck
+	line(495,204,495,212);
+	line(505,204,505,212);
+	//torso
+	line(480,212,520,212);
+	line(485,230,485,270);
+	line(515,230,515,270);
+	line(485,270,515,270);
+	//legs
+	line(500,288,515,330);
+	line(515,270,530,330);
+	line(500,288,485,330);
+	line(485,270,470,330);
+	//hands
+	line(515,230,529,278);
+	line(520,212,535,276);
+	circle(533,281,5);
+
+	line(485,230,475,255);
+	line(480,212,472,240);
+	line(475,255,455,236);
+	line(472,240,460,230);
+	circle(454,230,5);
+	//kunai
+	line(454,224,454,223);
+	line(452,226,452,223);
+	circle(453,220,3);
+	line(453,220,453,220);
+
+	line(454,236,454,239);
+	line(452,236,452,239);
+	line(454,239,456,243);
+	line(452,239,450,243);
+	line(456,243,453,258);
+	line(450,243,453,258);
+
+}
+void attack_gr1()
+{
+	for(int i=0; i<=255; i++)
+	{
+		battle_gr();
+		arc(166+i,230,270,90,26);
+
+		line(166+i,204,154+i,210);
+		line(154+i,210,166+i,217);
+		line(166+i,217,154+i,223);
+		line(154+i,223,166+i,230);
+		line(166+i,230,154+i,236);
+		line(154+i,236,166+i,243);
+		line(166+i,243,154+i,249);
+		line(154+i,249,166+i,256);
+		delay(3);
+		cleardevice();
+
+	}
+}
+
+
+
+void attack_gr2()
+{
+	for(int i=0; i<=267; i++)
+	{
+		battle_gr();
+		arc(445-i,230,90,270,26);
+
+		line(445-i,204,457-i,210);
+		line(457-i,210,445-i,217);
+		line(445-i,217,457-i,223);
+		line(457-i,223,445-i,230);
+		line(445-i,230,457-i,236);
+		line(457-i,236,445-i,243);
+		line(445-i,243,457-i,249);
+		line(457-i,249,445-i,256);
+		delay(3);
+
+		cleardevice();
+
+	}
+
+}
+
+void home_gr()
+{
+	clrscr();
+	int gdriver = DETECT, gmode;
+	initgraph(&gdriver, &gmode, "C:\\TURBOC3\\BGI");
+
+	//1st A
+	delay(800);
+	line(184,319,215,159);
+	line(188,319,219,159);
+	line(242,199,277,329);
+	line(238,204,273,334);
+	line(242,199,238,204);
+	line(277,329,273,334);
+
+	line(238,239,241,246);
+	line(241,246,212,246);
+	line(212,246,215,239);
+	line(238,239,215,239);
+
+	line(215,159,219,159);
+	line(184,319,188,319);
+	delay(800);
+	//S
+
+	line(280,319,359,319);
+	line(359,319,359,239);
+	line(359,239,287,239);
+	line(287,239,287,166);
+	line(287,166,359,166);
+
+	line(280,312,353,312);
+	line(353,312,353,246);
+	line(353,246,280,246);
+	line(280,246,280,159);
+	line(280,159,359,159);
+
+	line(359,166,359,159);
+	line(280,319,280,312);
+
+	//2ND A
+	delay(800);
+	line(365,319,382,234);
+	line(370,319,386,242);
+	line(382,234,417,234);
+	line(386,242,419,242);
+	line(370,319,365,319);
+	line(419,242,417,234);
+
+	line(385,220,398,159);
+	line(390,220,403,159);
+	line(385,220,390,220);
+	line(398,159,403,159);
+
+	line(420,199,455,329);
+	line(416,204,451,334);
+	line(420,199,416,204);
+	line(455,329,451,334);
+	delay(1300);
+
+	cleardevice();
+	settextstyle(1,0,8);
+	outtextxy(140,180,"SPARTANS");
+	settextstyle(1,0,1);
+	outtextxy(300,260,"production at its finest");
+
+	delay(1600);
+	cleardevice();
+
+
+	int i=0;
+	setcolor(BLUE);
+	while(i>=0)
+	{
+		here26:
+		if(i>=500)
+		{
+			exit(0);
+		}
+		delay(7);
+		line(50,i,50,i+3);
+		i++;
+		goto here1;
+	}
+	while(i>=0)
+	{
+		here1:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(150,i,150,i+3);
+		i++;
+		goto here2;
+	}
+	while(i>=0)
+	{
+		here2:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(250,i,250,i+3);
+		i++;
+		goto here3;
+	}
+	while(i>=0)
+	{
+		here3:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(350,i,350,i+3);
+		i++;
+		goto here4;
+	}
+	while(i>=0)
+	{
+		here4:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(450,i,450,i+3);
+		i++;
+		goto here5;
+	}
+	while(i>=0)
+	{
+		here5:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(550,i,550,i+3);
+		i++;
+		goto here6;
+	}
+	while(i>=0)
+	{
+		here6:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(650,i,650,i+3);
+		i++;
+		goto here7;
+	}
+
+	while(i>=0)
+	{
+		here7:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(100,i,100,i+3);
+		i++;
+		goto here8;
+	}
+	while(i>=0)
+	{
+		here8:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(200,i,200,i+3);
+		i++;
+		goto here9;
+	}
+	while(i>=0)
+	{
+		here9:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(300,i,300,i+3);
+		i++;
+		goto here10;
+	}
+	while(i>=0)
+	{
+		here10:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(400,i,400,i+3);
+		i++;
+		goto here11;
+	}
+	while(i>=0)
+	{
+		here11:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(500,i,500,i+3);
+		i++;
+		goto here12;
+	}
+	while(i>=0)
+	{
+		here12:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(600,i,600,i+3);
+		i++;
+		goto here13;
+	}
+
+
+	while(i>=0)
+	{
+		here13:
+		if(i>=500)
+		{
+			exit(0);
+		}
+		delay(7);
+		line(25,i,25,i+3);
+		i++;
+		goto here14;
+	}
+	while(i>=0)
+	{
+		here14:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(75,i,75,i+3);
+		i++;
+		goto here15;
+	}
+	while(i>=0)
+	{
+		here15:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(125,i,125,i+3);
+		i++;
+		goto here16;
+	}
+	while(i>=0)
+	{
+		here16:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(175,i,175,i+3);
+		i++;
+		goto here17;
+	}
+	while(i>=0)
+	{
+		here17:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(225,i,225,i+3);
+		i++;
+		goto here18;
+	}
+	while(i>=0)
+	{
+		here18:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(275,i,275,i+3);
+		i++;
+		goto here19;
+	}
+	while(i>=0)
+	{
+		here19:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(325,i,325,i+3);
+		i++;
+		goto here20;
+	}
+
+	while(i>=0)
+	{
+		here20:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(375,i,375,i+3);
+		i++;
+		goto here21;
+	}
+	while(i>=0)
+	{
+		here21:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(425,i,425,i+3);
+		i++;
+		goto here22;
+	}
+	while(i>=0)
+	{
+		here22:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(475,i,475,i+3);
+		i++;
+		goto here23;
+	}
+	while(i>=0)
+	{
+		here23:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(525,i,525,i+3);
+		i++;
+		goto here24;
+	}
+	while(i>=0)
+	{
+		here24:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(575,i,575,i+3);
+		i++;
+		goto here25;
+	}
+	while(i>=0)
+	{
+		here25:
+		if(i>=500)
+		{
+			goto there;
+		}
+		delay(7);
+		line(625,i,625,i+3);
+		i++;
+		goto here26;
+	}
+	there:
+	setcolor(YELLOW);
+	int midx=getmaxx()/2;
+
+	line(midx-50,0,midx+150,150);
+	line(midx+150,150,200,255);
+	line(200,255,midx+75,425);
+
+	line(midx+75,425,175,250);
+	line(175,250,midx+105,145);
+	line(midx+105,145,midx-100,0);
+	line(midx-50,0,midx-100,0);
+	setfillstyle(SOLID_FILL,YELLOW);
+	floodfill(254,5,YELLOW);
+
+	settextstyle(3,0,7);
+	outtextxy(100,15,"B");
+	outtextxy(100,65,"A");
+	outtextxy(100,115,"M");
+	outtextxy(97,175,"!!!");
+
+	sleep(1);
+	cleardevice();
+	int midx1=getmaxx()/15,style;
+
+	style=SMALL_FONT;
+	setcolor(3);
+	settextstyle(style,HORIZ_DIR,5);
+	outtextxy(midx1,30,"This is the story of a young boy who was lost forgotten and cast aside");
+	delay(2500);
+	outtextxy(midx1,60,"Everyone felt he would never amount to anything.");
+	delay(2500);
+	outtextxy(midx1,90,"He was treated like he was nothing..... but it all changed");
+	delay(2500);
+	outtextxy(midx1,120,"a single person showed him kindness, it was then he stood up for himself");
+	delay(2500);
+	outtextxy(midx1,150,"he grew stronger, bolder, and rose to power to vanquish his rival and...");
+	delay(2500);
+	outtextxy(midx1,180,"TO BE THE BEST THERE IS");
+	delay(2500);
+	outtextxy(midx1,210,"THIS IS THE STORY OF THAT BOY");
+	delay(2500);
+	settextstyle(style+1,HORIZ_DIR,6);
+	outtextxy(300,300,"THIS IS ...");
+	delay(125);
+	sleep(1);
+
+	cleardevice();
+	setcolor(1);
+	settextstyle(3, HORIZ_DIR, 7);
+	delay(1000);
+	outtextxy(85, 75, "THE BATTLE OF");
+	delay(500);
+	outtextxy(230, 170," THE");
+	settextstyle(1, HORIZ_DIR, 7);
+	setcolor(4);
+	delay(500);
+	outtextxy(75, 260, " F");
+	delay(200);
+	outtextxy(80, 260, "  I");
+	delay(200);
+	outtextxy(71, 260, "   N");
+	delay(200);
+	outtextxy(78, 260, "    A");
+	delay(200);
+	outtextxy(83, 260, "     L");
+	delay(200);
+	outtextxy(75, 260, "       V");
+	delay(200);
+	outtextxy(73, 260, "        A");
+	delay(200);
+	outtextxy(75, 260, "         L");
+	delay(200);
+	outtextxy(75, 260, "          L");
+	delay(200);
+	outtextxy(75, 260, "           E");
+	delay(200);
+	outtextxy(75, 260, "            Y");
+	delay(200);
+	settextstyle(0, HORIZ_DIR, 1);
+
+	while(!kbhit())
+	{
+		setcolor(15);
+		outtextxy(220,350,"Click any button to start!!");
+		delay(150);
+		setcolor(0);
+		outtextxy(220,350,"Click any button to start!!");
+		delay(150);
+
+	}
+	getch();
+}
+
+int done1=0;
+int done2=0;
+
+void help()
+{
+	int gd=DETECT,gm;
+	initgraph(&gd, &gm,"C:\\TURBOC3\\BGI");
+	settextstyle(1,0,4);
+	setcolor(9);
+rep:    cleardevice();
+	int midx =getmaxx()/2;
+	outtextxy(midx-50,30,"HELP");
+	setcolor(15);
+	settextstyle(2,0,5);
+	ifstream fin("help.txt");
+	if(!fin)
+	{
+		cout<<"Error in opening!"<<endl;
+		sleep(1);
+		return;
+	}
+	char ch[100];
+	while(!fin.eof())
+	{
+		fin.getline(ch,100);
+		static int i=0;
+		if(fin.eof())
+			break;
+		outtextxy(30,170+i,ch);
+		i+=20;
+	}
+	setcolor(15);
+	cout<<"\n\n\n\n\n\n\n\nPress \'x\' to exit ";
+	cout<<"\nChoice : ";
+	char ch1;
+	cin>>ch1;
+	if(ch1=='x')
+		return;
+	else
+		goto rep;
+}
+
+void leaf_gr()
+{
+	clrscr();
+	int r;
+	randomize();
+	r=random(3)+1;
+	for(int i=1; i<=r ;i++)
+	{
+		int gd=DETECT,gm;
+		initgraph(&gd, &gm,"C:\\TURBOC3\\BGI");
+		outtextxy(270,335,"Loading...");
+		float c_angle = 0, angle_inc = 0.1, c_radius = 5, radius_inc = 0.1;
+		float midx=300;
+		float midy=300;
+		int i, oldx = midx, oldy = midy;
+
+		for(i=0;i<119;i++)
+		{
+		line(oldx,oldy, cos(c_angle)*c_radius+midx, sin(c_angle)*c_radius+midy);
+		oldx = cos(c_angle)*c_radius+midx;
+		oldy = sin(c_angle)*c_radius+midy;
+
+		c_angle += angle_inc;
+		c_radius += radius_inc;
+		delay(15);
+		}
+		for(int q=0; q<=8; q++)
+		{
+			delay(15);
+			line(313+q,288-q,313+q,288-q);
+		}
+
+		for(int y=0,z=0; y<=4 && z<=23; z++)
+		{
+			delay(15);
+			if(z%5==0)
+				y++;
+
+			putpixel(286-y,300+z, WHITE);
+		}
+		for(y=0,z=0; y<=18 && z<=9; y++)
+		{
+			delay(15);
+			if(y%2==0)
+			z++;
+
+			putpixel(298-y,312+z, WHITE);
+		 }
+	}
+	closegraph();
+}
+
+char arr1[50];
+char arr2[50];
+char arr3[50];
+char arr4[50];
+
+void datafile(char data[])
+{
+	ifstream fin(data);
+	if(!fin)
+	{
+		cout<<"\nError in opening the file\n";
+		getch();
+		return;
+	}
+	char arr[200];
+	int fl_char=0;
+	while(!fin.eof())
+	{
+		fl_char++;
+
+		if(fin.eof())
+		{
+			break;
+		}
+		if(fl_char==1)
+		{
+			fin.getline(arr,100,'\n');
+			strcpy(arr1,arr);
+		}
+		if(fl_char==2)
+		{
+			fin.getline(arr,100,'\n');
+			strcpy(arr2,arr);
+		}
+		if(fl_char==3)
+		{
+			fin.getline(arr,100,'\n');
+			strcpy(arr3,arr);
+		}
+		if(fl_char==4)
+		{
+			fin.getline(arr,100,'\n');
+			strcpy(arr4,arr);
+		}
+	}
+}
+char arr11[50];
+char arr21[50];
+char arr31[50];
+char arr41[50];
+void datafile1(char data[])
+{
+	ifstream fin(data);
+	if(!fin)
+	{
+		cout<<"\nError in opening the file\n";
+		getch();
+		return;
+	}
+	char arr[200];
+	int fl_char=0;
+	while(!fin.eof())
+	{
+		fl_char++;
+
+		if(fin.eof())
+		{
+			break;
+		}
+		if(fl_char==1)
+		{
+			fin.getline(arr,100,'\n');
+			strcpy(arr11,arr);
+		}
+		if(fl_char==2)
+		{
+			fin.getline(arr,100,'\n');
+			strcpy(arr21,arr);
+		}
+		if(fl_char==3)
+		{
+			fin.getline(arr,100,'\n');
+			strcpy(arr31,arr);
+		}
+		if(fl_char==4)
+		{
+			fin.getline(arr,100,'\n');
+			strcpy(arr41,arr);
+		}
+	}
+}
+
+int choose_ninja(player &p,int n)
+{
+	int gd=DETECT,gm;
+	initgraph(&gd, &gm,"C:\\TURBOC3\\BGI");
+there_3:	       //copy the "p" 's values into player1/2
+	cleardevice();
+	setcolor(15);
+	cout<<"Choose a Ninja for Player "<<n<<endl;
+	cout<<"Player Name: "<<p.getuid()<<endl;
+	cout<<"Player EXP: "<<p.getexp()<<endl;
+	int lvl;
+	if(p.getexp()>=0 && p.getexp()<100)
+	{
+		lvl=1;
+	}
+	if(p.getexp()>=100 && p.getexp()<250)
+	{
+		lvl=2;
+	}
+	if(p.getexp()>=250 && p.getexp()<450)
+	{
+		lvl=3;
+	}
+	if(p.getexp()>=450)
+	{
+		lvl=4;
+	}
+	switch(lvl)
+	{
+		case 1 :
+			 lbl_1:
+			 p.sethp(100);
+			 p.setchakra(25);
+			 p.atk1=10;
+			 p.atk2=15;
+			 p.atk3=25;
+			 p.atk4=50;
+			 int menu_4;
+			 cout<<"\nChoose ninja: "<<endl;
+			 cout<<"\n\t1. Sakura\n\t2. Hinata\n\t3. Kiba\n\t4. Back\n";
+			 cout<<"\nChoice: ";
+			 cin>>menu_4;
+			 switch(menu_4)  //put one temp
+			 {
+				case 1:
+					{
+					p.setlvl(11);
+					ifstream fin("sakd.txt");
+					if(!fin)
+					{
+						cout<<"\nError in opening";
+						sleep(1);
+						exit(0);
+					}
+					char ch;
+					while(!fin.eof())
+					{
+						fin.get(ch);
+						if(fin.eof())
+						{
+							getch();
+							fin.close();
+							closegraph();
+							return 1;
+						}
+						cout<<ch;
+					}
+					break;
+					}
+				case 2: {
+					p.setlvl(12);
+					ifstream fin("hind.txt");
+					if(!fin)
+					{
+						cout<<"\nError in opening";
+						sleep(1);
+						exit(0);
+					}
+					char ch;
+					while(!fin.eof())
+					{
+						fin.get(ch);
+						if(fin.eof())
+						{
+							getch();
+							fin.close();
+							closegraph();
+							return 1;
+						}
+						cout<<ch;
+					}
+					break;
+					}
+				case 3: {
+					p.setlvl(13);
+					ifstream fin("kibd.txt");
+					if(!fin)
+					{
+						cout<<"\nError in opening";
+						sleep(1);
+						exit(0);
+					}
+					char ch;
+					while(!fin.eof())
+					{
+						fin.get(ch);
+						if(fin.eof())
+						{
+							getch();
+							fin.close();
+							closegraph();
+							return 1;
+						}
+						cout<<ch;
+					}
+					break;
+					}
+				case 4: return 0;
+				default: cout<<"\nInvalid option!";
+					 getch();
+					 goto there_3;
+			 }
+			 break;
+		case 2 :
+			 lbl_2:
+			 p.sethp(150);
+			 p.setchakra(35);
+			 p.atk1=20;
+			 p.atk2=25;
+			 p.atk3=35;
+			 p.atk4=70;
+			 int menu_5;
+			 cout<<"\nChoose ninja: "<<endl;
+			 cout<<"\n\t1. Kakashi\n\t2. Guy\n\t3. Neji\n\t4. Choose from level 1\n\t5. Back\n";
+			 cout<<"\nChoice: ";
+			 cin>>menu_5;
+			 switch(menu_5)
+			 {
+				case 1: {
+					p.setlvl(21);
+					ifstream fin("kakd.txt");
+					if(!fin)
+					{
+						cout<<"\nError in opening";
+						sleep(1);
+						exit(0);
+					}
+					char ch;
+					while(!fin.eof())
+					{
+						fin.get(ch);
+						if(fin.eof())
+						{
+							getch();
+							fin.close();
+							closegraph();
+							return 1;
+						}
+						cout<<ch;
+					}
+					break;
+					}
+				case 2: {
+					p.setlvl(22);
+					ifstream fin("guyd.txt");
+					if(!fin)
+					{
+						cout<<"\nError in opening";
+						sleep(1);
+						exit(0);
+					}
+					char ch;
+					while(!fin.eof())
+					{
+						fin.get(ch);
+						if(fin.eof())
+						{
+							getch();
+							fin.close();
+							closegraph();
+							return 1;
+						}
+						cout<<ch;
+					}
+					}
+					break;
+				case 3: {
+					p.setlvl(23);
+					ifstream fin("nejd.txt");
+					if(!fin)
+					{
+						cout<<"\nError in opening";
+						sleep(1);
+						exit(0);
+					}
+					char ch;
+					while(!fin.eof())
+					{
+						fin.get(ch);
+						if(fin.eof())
+						{
+							getch();
+							fin.close();
+							closegraph();
+							return 1;
+						}
+						cout<<ch;
+					}
+					break;
+					}
+				case 4: goto lbl_1;
+				case 5: return 0;
+				default: cout<<"Invalid Option!";
+					 getch();
+					 goto there_3;
+			}
+			break;
+		case 3 :
+			 lbl_3:
+			 p.sethp(200);
+			 p.setchakra(60);
+			 p.atk1=35;
+			 p.atk2=45;
+			 p.atk3=60;
+			 p.atk4=100;
+			 int menu_6;
+			 cout<<"\nChoose Ninja: "<<endl;
+			 cout<<"\n\t1. Hashirama\n\t2. Madara\n\t3. Choose from level 1\n\t4. Choose from level 2\n\t5. Back\n";
+			 cout<<"\nChoice: ";
+			 cin>>menu_6;
+			 switch(menu_6)
+			 {
+				case 1: {
+					p.setlvl(31);
+					ifstream fin("hashd.txt");
+					if(!fin)
+					{
+						cout<<"\nError in opening";
+						sleep(1);
+						exit(0);
+					}
+					char ch;
+					while(!fin.eof())
+					{
+						fin.get(ch);
+						if(fin.eof())
+						{
+							getch();
+							fin.close();
+							closegraph();
+							return 1;
+						}
+						cout<<ch;
+					}
+					break;
+				       }
+				case 2: {
+					p.setlvl(32);
+					ifstream fin("madd.txt");
+					if(!fin)
+					{
+						cout<<"\nError in opening";
+						sleep(1);
+						exit(0);
+					}
+					char ch;
+					while(!fin.eof())
+					{
+						fin.get(ch);
+						if(fin.eof())
+						{
+							getch();
+							fin.close();
+							closegraph();
+							return 1;
+						}
+						cout<<ch;
+					}
+					break;
+					}
+				case 3: goto lbl_1;
+				case 4: goto lbl_2;
+				case 5: return 0;
+				default: cout<<"Invalid Option!";
+					 getch();
+					 goto there_3;
+			}
+			break;
+		case 4 :
+			 lbl_4:
+			 p.sethp(250);
+			 p.setchakra(90);
+			 p.atk1=50;
+			 p.atk2=75;
+			 p.atk3=90;
+			 p.atk4=150;
+			 int menu_7;
+			 cout<<"\nChoose ninja: "<<endl;
+			 cout<<"\n\t1. Sasuke\n\t2. Naruto\n\t3. Choose from level 1\n\t4. Choose from level 2\n\t5. Choose from level 3\n\t6. Back\n";
+			 cout<<"\nChoice: ";
+			 cin>>menu_7;
+			 switch(menu_7)
+			 {
+				case 1:{
+					p.setlvl(41);
+					ifstream fin("sasd.txt");
+					if(!fin)
+					{
+						cout<<"\nError in opening";
+						sleep(1);
+						exit(0);
+					}
+					char ch;
+					while(!fin.eof())
+					{
+						fin.get(ch);
+						if(fin.eof())
+						{
+							getch();
+							fin.close();
+							closegraph();
+							return 1;
+						}
+						cout<<ch;
+					}
+					break;
+				       }
+				case 2: {
+					p.setlvl(42);
+					ifstream fin("narud.txt");
+					if(!fin)
+					{
+						cout<<"\nError in opening";
+						sleep(1);
+						exit(0);
+					}
+					char ch;
+					while(!fin.eof())
+					{
+						fin.get(ch);
+						if(fin.eof())
+						{
+							getch();
+							fin.close();
+							closegraph();
+							return 1;
+						}
+						cout<<ch;
+					}
+					break;
+				       }
+				case 3: goto lbl_1;
+				case 4: goto lbl_2;
+				case 5: goto lbl_3;
+				case 6: return 0;
+				default: cout<<"Invalid Option!";
+					 getch();
+					 goto there_3;
+
+			 }
+			 break;
+		default: cout<<"Invalid option!";
+			 getch();
+			 goto there_3;
+	}
+	return 0;
+}
+
+void sort(player p[],int s);
+
+void entercred(char name[],char p[])
+{
+	clrscr();
+	char ch,opt;//p[50];
+	int i,size_pwd=0;
+	int bck=0;
+	int gd=DETECT,gm;
+	initgraph(&gd, &gm,"C:\\TURBOC3\\BGI");
+rep:	cleardevice();
+	setcolor(15);
+	cout<<"\n\nEnter user name: ";
+	cin>>name;
+	if(name[0]=='\0')
+	{
+		cout<<"Please enter a Username";
+		getch();
+		goto rep;
+	}
+	cout<<"Enter password: ";
+	for(i=0; i<100; i++)
+	{
+		ch=getch();
+		if(ch==13)
+		{
+			break;
+		}
+		if(ch==8 && bck>=0 && size_pwd>=0)
+		{
+			bck--;
+			size_pwd--;
+			clrscr();
+			cout<<"Enter user name: ";
+			cout<<name;
+			cout<<endl<<"Enter password: ";
+			for(int q=0; q<bck; q++)
+			{
+				cout<<"*";
+			}
+
+		}
+		else
+		{
+			p[i]=ch;
+			ch='*';
+			cout<<ch;
+			bck++;
+			size_pwd++;
+		}
+
+	}
+	p[i]='\0';
+	cout<<endl;
+	if(size_pwd==0 )
+	{
+		cout<<"Please enter a Password"<<endl<<endl;
+		getch();
+		goto rep;
+	}
+	closegraph();
+}
+int isadmin=0; //to check whether the obj is admin
+
+void login()
+{
+there1: clrscr();
+	int gd=DETECT,gm;
+	initgraph(&gd, &gm,"C:\\TURBOC3\\BGI");
+	int menu_2;
+	settextstyle(1,0,4);
+	setcolor(9);
+	outtextxy(50,30,"THE BATTLE OF THE FINAL VALLEY");
+	settextstyle(2,0,6);
+	if(done1==1)
+	{
+		setcolor(2);
+		outtextxy(60,100,"1. Player 1");
+	}
+	else
+	{
+		setcolor(4);
+		outtextxy(60,100,"1. Player 1");
+	}
+	if(done2==1)
+	{
+		setcolor(2);
+		outtextxy(60,120,"2. Player 2");
+	}
+	else
+	{
+		setcolor(4);
+		outtextxy(60,120,"2. Player 2");
+	}
+	if(isadmin==1)
+	{
+		setcolor(2);
+		outtextxy(60,140,"3. Admin");
+	}
+	else
+	{
+		setcolor(15);
+		outtextxy(60,140,"3. Admin");
+	}
+	setcolor(15);
+//	cout<<"\n4. Play\n5. Admin Privileges\n6. Back\n7. Exit";
+	outtextxy(60,160,"4. Play");
+	outtextxy(60,180,"5. Admin Privileges");
+	outtextxy(60,200,"6. Back");
+	outtextxy(60,220,"7. Exit");
+	outtextxy(60,240,"Press Enter after choosing");
+	outtextxy(60,280,"Choice: ");
+	char buf[10];
+	char x[1];
+	int y;
+	x[0]=getch();
+	y=atoi(x);
+	sprintf(buf,"Choice: %d", y);
+	outtextxy(60,280,buf);
+	char q[1];
+	q[0]=getch();
+	if(q[0]==8)
+	{
+		goto there1;
+	}
+       //	cin>>menu_2;
+	menu_2=y;
+	switch(menu_2)
+	{
+		case 1 :	char p1[10], name1[10],ans1[100];
+				closegraph();
+				entercred(name1,p1);
+				check(name1,p1,menu_2);
+				break;
+
+		case 2 :	char p2[10], name2[10],ans2[100];
+				closegraph();
+				entercred(name2,p2);
+				check(name2,p2,menu_2);
+				break;
+		case 3 :	char admin_name[10], admin_pwd[10],ch2,admin_ans[100];
+				closegraph();
+				entercred(admin_name,admin_pwd);
+				check(admin_name,admin_pwd,menu_2);
+				break;
+		case 4 :
+				if(done1==1&&done2==1)
+				{
+					closegraph();
+					sleep(1);
+					lbl123:
+					if(choose_ninja(player1,1)==0)
+						goto there1;
+					sleep(1);
+					if(choose_ninja(player2,2)==0)
+						goto lbl123;
+					battle(); //game will only play if both players are logged in (check this using color)
+				}
+				else
+				{
+					outtextxy(80,320,"Please login to play!");
+					delay(300);
+				}
+				break;
+		case 5 :       	if(isadmin==0)
+				{
+					outtextxy(80,320,"Login as administrator!");
+				}
+				else
+				{
+					closegraph();
+					admin_options();
+				}
+				break;
+		case 6 :        closegraph();
+				return; //goes to prev menu-> main
+		case 7 :        closegraph();
+				exit(0);
+				break;
+		default:   	outtextxy(110,280,"INVALID CHOICE!");
+				sleep(1);
+	}
+	closegraph();
+	goto there1;	//only way to get out is "back" or "play"
+}
+char check_name1[20],check_name2[20];
+void check(char uid[],char pwd[],int opt)   //opt is to check which player info is being taken in the switch case
+{
+	int gd=DETECT,gm;
+	initgraph(&gd, &gm,"C:\\TURBOC3\\BGI");
+	setcolor(15);
+	ifstream fin("playerinfo.dat",ios::binary);
+	if(!fin)
+	{
+		cout<<"\nError in opening file";
+		sleep(1);
+		return;
+	}
+	int flag=0;
+	player s;
+	while(fin.read((char*)&s,sizeof(s)))
+	{
+		if(strcmp(s.getuid(),uid)==0 && strcmp(s.getpwd(),pwd)==0)
+		{
+			flag=1;
+
+			if(opt==1 && strcmp(uid,check_name2)!=0)
+			{
+				cout<<"\nLogin successful";
+				strcpy(check_name1,uid);
+				done1=1;
+				player1=s;   //copies data from file onto plr1
+				getch();
+			}
+			else if(opt==1 && strcmp(uid,check_name2)==0)
+			{
+				cout<<"\nThis player has already logged in";
+				getch();
+			}
+			else if(opt==2 && strcmp(uid,check_name1)!=0)
+			{
+				cout<<"\nLogin successful";
+				strcpy(check_name2,uid);
+				done2=1;
+				player2=s;
+				getch();
+			}
+			else if(opt==2 && strcmp(uid,check_name1)==0)
+			{
+				cout<<"\nThis player has already logged in";
+				getch();
+			}
+			else if(opt==3 && strcmp(uid,"admin")==0 && strcmp(pwd,"admin")==0)
+			{
+				cout<<"\nLogin successful";
+				admin=s;
+				isadmin=1;
+				getch();
+			}
+			else
+				flag=0;
+		}
+	}
+	if(flag==0)
+	{
+		cout<<"\nLogin failed. Incorrect credentials";
+		getch();
+	}
+	closegraph();
+	fin.close();
+}
+
+int check_exists(char uid[])
+{
+	ifstream fin("playerinfo.dat",ios::binary);
+	if(!fin)
+	{
+		cout<<"\nError in opening file";
+		getch();
+		return 0;
+	}
+	player s;
+	int flag=1;
+	while(fin.read((char*)&s,sizeof(s)))
+	{
+		if(strcmp(s.getuid(),uid)==0)
+		{
+			flag=0;
+			cout<<"This username has been taken. Please choose another one";
+			getch();
+			break;
+		}
+	}
+	fin.close();
+	return flag;
+}
+
+void sign_up()  // for new player
+{
+	ofstream fout("playerinfo.dat",ios::binary|ios::app);
+	if(!fout)
+	{
+		cout<<"Error in opening file \nError: S_U1x200";
+		getch();
+		return;
+	}
+	player s;
+	char p[10], name[10],ch,ans[100];
+	int i;
+repeat:	clrscr();
+	entercred(name,p);
+	if(check_exists(name)==1)
+	{
+		s.putuid(name);
+		s.putpwd(p);
+		s.createexp();
+		fout.write((char*)&s,sizeof(s));
+		fout.close();
+	}
+	else
+	{
+		fout.close();
+		goto repeat;
+	}
+}
+////////////admin privilages////////////////////////
+
+void disp_all()
+{
+	ifstream fin("playerinfo.dat",ios::binary);
+	if(!fin)
+	{
+		cout<<"Error";
+		getch();
+		return;
+	}
+	player s;
+	cout<<"\Player List :\n";
+	cout<<setw(15)<<"User ID"<<setw(5)<<"EXP"<<endl;
+	while(!fin.eof())
+	{
+		fin.read((char*)&s,sizeof(s));
+		if(fin.eof())
+		{
+			return;
+		}
+		s.show();
+	}
+	fin.close();
+}
+
+void disp_name()
+{
+	ifstream fin("playerinfo.dat",ios::binary);
+	if(!fin)
+	{
+		cout<<"Error";
+		return;
+	}
+	player s;
+	disp_all();
+	cout<<"\nEnter the name to be searched => ";
+	char srch[20];
+	cin>>srch;
+	cout<<"\nSearched data :\n";
+	cout<<setw(15)<<"User ID"<<setw(5)<<"EXP"<<endl;
+	while(!fin.eof())
+	{
+		fin.read((char*)&s,sizeof(s));
+		if(fin.eof())
+		{
+			break;
+		}
+		if(strcmp(s.getuid(),srch)==0)
+		{
+			s.show();
+			fin.close();
+			return;
+		}
+	}
+	cout<<"\nSearched record not found!";
+	fin.close();
+}
+
+void del()
+{
+	ifstream fin("playerinfo.dat",ios::binary);
+	ofstream fout("temp.dat",ios::binary|ios::app);
+	if(!fin||!fout)
+	{
+		cout<<"Error";
+		sleep(1);
+		return;
+	}
+	player s;
+	disp_all();
+	cout<<"\nEnter the name to be deleted => ";
+	char srch[15];
+	cin>>srch;
+	int flag=0;
+	while(!fin.eof())
+	{
+		fin.read((char*)&s,sizeof(s));
+		if(fin.eof())
+		{
+			fin.close();
+			fout.close();
+			remove("playerinfo.dat");
+			rename("temp.dat","playerinfo.dat");
+			if(flag==0)
+			{
+				cout<<"Not found!";
+				getch();
+			}
+			return;
+		}
+		if(strcmp(s.getuid(),srch)==0)
+		{
+			flag++;
+			continue;
+		}
+		fout.write((char*)&s,sizeof(s));
+	}
+}
+
+void mod()
+{
+	ifstream fin("playerinfo.dat",ios::binary);
+	ofstream fout("temp.dat",ios::binary|ios::app);
+	if(!fin||!fout)
+	{
+		cout<<"Error";
+		return;
+	}
+	player s;
+	disp_all();
+	cout<<"\nEnter the Player to be modified : ";
+	char srch[20];
+	cin>>srch;
+	int flag=0;
+	while(!fin.eof())
+	{
+		fin.read((char*)&s,sizeof(s));
+		if(fin.eof())
+		{
+			fin.close();
+			fout.close();
+			remove("playerinfo.dat");
+			rename("temp.dat","playerinfo.dat");
+			if(flag==0)
+			{
+				cout<<"Not found!";
+				getch();
+			}
+			return;
+		}
+		if(strcmp(s.getuid(),srch)==0)
+		{
+			flag++;
+			char name[20],p[20],ans[100];
+			entercred(name,p);
+			s.putuid(name);
+			s.putpwd(p);
+			cout<<"\nEnter desired EXP : ";
+			int x;
+			cin>>x;
+			s.adminexp(x);
+			fout.write((char*)&s,sizeof(s));
+			cout<<"\nPlayer modified";
+			continue;
+		}
+		fout.write((char*)&s,sizeof(s));
+	}
+	getch();
+}
+
+void admin_options()
+{
+	if(isadmin==1)
+	{
+rep:		int gd=DETECT,gm;
+		initgraph(&gd, &gm,"C:\\TURBOC3\\BGI");
+		cleardevice();
+		cout<<"\t\t\t\tADMINISTRATIVE CONTROL";
+		cout<<"\n\n\nPress :\n"
+			<<"1. To display the player list\n"
+			<<"2. To search for a player by UserName\n"
+			<<"3. To modify a player's details\n"
+			<<"4. To delete a player\n"
+			<<"5. To go back\n"
+			<<"\tChoice : ";
+		int choice;
+		cin>>choice;
+		switch(choice)
+		{
+			case 1:		disp_all();
+					break;
+			case 2:		disp_name();
+					break;
+			case 3:		mod();
+					break;
+			case 4:		del();
+					break;
+			case 5:         closegraph();
+					return;
+			default:	cout<<"Invalid Choice";
+		}
+		getch();
+		closegraph();
+		goto rep;
+	}
+}
+//////////////////////////////////////////////
+
+void leaderboard()
+{
+	ifstream fin("playerinfo.dat",ios::binary);
+	if(!fin)
+	{
+		cout<<"Error in opening file";
+		getch();
+		return;
+	}
+	player s,hold[20];
+	int i=0;
+	while(fin.read((char*)&s,sizeof(s)))
+	{
+		hold[i]=s;
+		i++;
+	}
+	int gd=DETECT,gm;
+	initgraph(&gd, &gm,"C:\\TURBOC3\\BGI");
+	int midx = getmaxx()/2;
+	settextstyle(3,0,5);
+	outtextxy(midx-120,10,"LEADERBOARD");
+	outtextxy(midx-170,70,"PLAYER");
+	outtextxy(midx+90,70,"EXP");
+	sort(hold,i+1);//prints as well
+	getch();
+	closegraph();
+
+}
+
+void sort(player srt[],int n)
+{
+	player temp;
+	int large,pos;
+	int midx = getmaxx()/2;
+	for(int i=0;i<n-1;i++)
+	{
+		large=srt[i].getexp();
+		pos=i;
+		for(int j=i+1;j<n;j++)
+		{
+			if(srt[j].getexp()>large)
+			{
+				large=srt[j].getexp();
+				pos=j;
+			}
+		}
+		temp=srt[i];
+		srt[i]=srt[pos];
+		srt[pos]=temp;
+	}
+	for(int j=0;j<n-1;j++)
+	{
+		settextstyle(2,0,8);
+		char buf_exp1[10];
+		int exp_1;
+		exp_1=srt[j].getexp();
+		sprintf(buf_exp1, " %d", exp_1);
+		outtextxy(midx-150,140+50*j,srt[j].getuid());
+		outtextxy(midx+90,140+50*j,buf_exp1);
+	}
+}
+
+void mod_exp(char srch[20])
+{
+	ifstream fin("playerinfo.dat",ios::binary);
+	ofstream fout("temp.dat",ios::binary|ios::app);
+	if(!fin||!fout)
+	{
+		cout<<"Error";
+		sleep(1);
+		return;
+	}
+	player s;
+	int flag=0;
+	while(!fin.eof())
+	{
+		fin.read((char*)&s,sizeof(s));
+		if(fin.eof())
+		{
+			fin.close();
+			fout.close();
+			remove("playerinfo.dat");
+			rename("temp.dat","playerinfo.dat");
+			if(flag==0)
+			{
+				cout<<"Not found!";
+				sleep(1);
+			}
+			return;
+		}
+		if(strcmp(s.getuid(),srch)==0)
+		{
+			flag++;
+			s.setexp();
+			fout.write((char*)&s,sizeof(s));
+			cout<<"\nEXP incremented";
+			sleep(2);
+			continue;
+		}
+		fout.write((char*)&s,sizeof(s));
+	}
+}
+
+char winnerscr(int x)
+{
+	clrscr();
+	int gd=DETECT,gm;
+	initgraph(&gd, &gm,"C:\\TURBOC3\\BGI");
+	char win_uid[50];
+	delay(1000);
+	settextstyle(3,0,7);
+	outtextxy(125,70,"THE  WINNER");
+	delay(500);
+	outtextxy(290,170,"IS");
+	delay(1000);
+	settextstyle(0,0,1);
+	setcolor(15);
+	outtextxy(215,360,"Click any button to continue");
+	if(x==1)
+	{
+		while(!kbhit())
+		{
+			settextstyle(3,0,7);
+			setcolor(1);
+
+			outtextxy(190,270,"PLAYER 1");
+			delay(150);
+			setcolor(0);
+			outtextxy(190,270,"PLAYER 1");
+			delay(150);
+			strcpy(win_uid,player1.getuid());
+		}
+	}
+	if(x==2)
+	{
+		while(!kbhit())
+		{
+			settextstyle(3,0,7);
+			setcolor(1);
+			outtextxy(190,270,"PLAYER 2");
+			delay(150);
+			setcolor(0);
+			outtextxy(190,270,"PLAYER 2");
+			delay(150);
+			strcpy(win_uid,player2.getuid());
+		}
+	}
+	mod_exp(win_uid);
+	cleardevice();
+
+lbl:
+	char ch;
+	cout<<"\n\n\n\nPress \'r\' to replay\n";
+	cout<<"Press \'x\' to exit\n";
+	cout<<"Choice : ";
+	cin>>ch;
+	if(ch=='r')
+	{
+		closegraph();
+		return 'r';
+	}
+	else if(ch=='x')
+	{
+		closegraph();
+		return 'x';
+	}
+	else
+	{
+		cout<<"Invalid option!";
+		getch();
+		closegraph();
+		goto lbl;
+	}
+}
+
+void battle()
+{
+
+	leaf_gr();
+	int gd=DETECT,gm,ch2,ch1;
+	initgraph(&gd, &gm,"C:\\TURBOC3\\BGI");
+	while(player1.gethp()>0 && player2.gethp()>0)
+	{
+		if(player1.getlvl()==11)
+		{
+			datafile("sakura.txt");
+		}
+		if(player1.getlvl()==12)
+		{
+			datafile("hinata.txt");
+		}
+		if(player1.getlvl()==13)
+		{
+			datafile("kiba.txt");
+		}
+		if(player1.getlvl()==21)
+		{
+			datafile("kakashi.txt");
+		}
+		if(player1.getlvl()==22)
+		{
+			datafile("guy.txt");
+		}
+		if(player1.getlvl()==23)
+		{
+			datafile("neji.txt");
+		}
+		if(player1.getlvl()==31)
+		{
+			datafile("hashirama.txt");
+		}
+		if(player1.getlvl()==32)
+		{
+			datafile("madara.txt");
+		}
+		if(player1.getlvl()==41)
+		{
+			datafile("sasuke.txt");
+		}
+		if(player1.getlvl()==42)
+		{
+			datafile("naruto.txt");
+		}
+		if(player2.getlvl()==11)
+		{
+			datafile1("sakura.txt");
+		}
+		if(player2.getlvl()==12)
+		{
+			datafile1("hinata.txt");
+		}
+		if(player2.getlvl()==13)
+		{
+			datafile1("kiba.txt");
+		}
+		if(player2.getlvl()==21)
+		{
+			datafile1("kakashi.txt");
+		}
+		if(player2.getlvl()==22)
+		{
+			datafile1("guy.txt");
+		}
+		if(player2.getlvl()==23)
+		{
+			datafile1("neji.txt");
+		}
+		if(player2.getlvl()==31)
+		{
+			datafile1("hashirama.txt");
+		}
+		if(player2.getlvl()==32)
+		{
+			datafile1("madara.txt");
+		}
+		if(player2.getlvl()==41)
+		{
+			datafile1("sasuke.txt");
+		}
+		if(player2.getlvl()==42)
+		{
+			datafile1("naruto.txt");
+		}
+
+repeat1:
+z:              cleardevice();
+		battle_gr();
+		char buf_hp1[10],buf_ck1[10];
+		int hp_1,ck_1;
+		hp_1=player1.gethp();
+		ck_1=player1.getchakra();
+		sprintf(buf_hp1, "HP: %d", hp_1);
+		outtextxy(70,130,buf_hp1);
+		sprintf(buf_ck1, "CHAKRA: %d", ck_1);
+		outtextxy(70,140,buf_ck1);
+
+		char buf_hp2[10],buf_ck2[10];
+		int hp_2,ck_2;
+		hp_2=player2.gethp();
+		ck_2=player2.getchakra();
+		sprintf(buf_hp2, "HP: %d", hp_2);
+		outtextxy(470,130,buf_hp2);
+		sprintf(buf_ck2, "CHAKRA: %d", ck_2);
+		outtextxy(470,140,buf_ck2);
+
+		outtextxy(70,120,"Player 1");
+		outtextxy(275,40,"PLAYER 1");
+
+	outtextxy(10,345,arr1);
+	outtextxy(170,345,arr2);
+
+	outtextxy(10,420,arr3);
+	outtextxy(170,420,arr4);
+
+	outtextxy(510,345,arr21);
+	outtextxy(370,345,arr11);
+
+	outtextxy(510,420,arr41);
+	outtextxy(370,420,arr31);
+
+	settextstyle(1,0,2);
+
+	outtextxy(334,328,"5.");
+	outtextxy(334,348,"C");
+	outtextxy(334,368,"H");
+	outtextxy(334,388,"A");
+	outtextxy(334,408,"R");
+	outtextxy(334,428,"G");
+	outtextxy(334,448,"E");
+	settextstyle(0,0,1);
+		outtextxy(205,68,"Choose an attack or charge:");
+		gotoxy(54,5);
+
+		cin>>ch2;
+		switch(ch2)
+		{
+			case 1 :
+				   if(player1.getchakra()>=player1.atk1)
+				   {
+				   attack_gr1();
+				   player2.sethp(player2.gethp()-player1.atk1);
+				   player1.changechakra(player1.atk1);
+				   }
+				   else
+				   {
+					cout<<"\nChakra Insufficient!"
+					<<"\nYou need to charge Charge";
+					getch();
+					goto repeat1;
+				   }
+				   break;
+			case 2 :
+				   if(player1.getchakra()>=player1.atk2)
+				   {
+				   attack_gr1();
+				   player2.sethp(player2.gethp()-player1.atk2);
+				   player1.changechakra(player1.atk2);
+				   }
+				   else
+				   {
+					cout<<"\nChakra Insufficient!"
+					<<"\nChoose another attack or Charge";
+					getch();
+					goto repeat1;
+				   }
+				   break;
+			case 3 :
+				   if(player1.getchakra()>=player1.atk3)
+				   {
+				   attack_gr1();
+				   player2.sethp(player2.gethp()-player1.atk3);
+				   player1.changechakra(player1.atk3);
+				   }
+				   else
+				   {
+					cout<<"\nChakra Insufficient!"
+					<<"\nChoose another attack or Charge";
+					getch();
+					goto repeat1;
+				   }
+				   break;
+			case 4 :
+				   if(player1.getchakra()>=player1.atk4)
+				   {
+				   attack_gr1();
+				   player2.sethp(player2.gethp()-player1.atk4);
+				   player1.changechakra(player1.atk4);
+				   }
+				   else
+				   {
+					cout<<"\nChakra Insufficient!"
+					<<"\nChoose another attack or Charge";
+					getch();
+					goto repeat1;
+				   }
+				   break;
+			case 5 :   if(player1.getchakra()>=(1.5*player1.atk4))
+				   {
+					int midy = getmaxy()/2;
+					int midx = getmaxx()/2;
+
+					outtextxy(midx-120,midy-115,"Chakra is full...cannot charge");
+					getch();
+					goto z;
+				   }
+				   else
+				   {
+					player1.inc_chakra(player1.atk2);
+					if(player1.getchakra()>1.5*player1.atk4)
+						player1.setchakra(1.5*player1.atk4);
+				   }
+				   break;
+			default  : cout<<"\nInvalid option\n";
+				   getch();
+		}
+
+		if(player2.getlvl()==11)
+		{
+			datafile1("sakura.txt");
+		}
+		if(player2.getlvl()==12)
+		{
+			datafile1("hinata.txt");
+		}
+		if(player2.getlvl()==13)
+		{
+			datafile1("kiba.txt");
+		}
+		if(player2.getlvl()==21)
+		{
+			datafile1("kakashi.txt");
+		}
+		if(player2.getlvl()==22)
+		{
+			datafile1("guy.txt");
+		}
+		if(player2.getlvl()==23)
+		{
+			datafile1("neji.txt");
+		}
+		if(player2.getlvl()==31)
+		{
+			datafile1("hashirama.txt");
+		}
+		if(player2.getlvl()==32)
+		{
+			datafile1("madara.txt");
+		}
+		if(player2.getlvl()==41)
+		{
+			datafile1("sasuke.txt");
+		}
+		if(player2.getlvl()==42)
+		{
+			datafile1("naruto.txt");
+		}
+repeat2:
+x:
+		cleardevice();
+		battle_gr();
+		if(player2.gethp()>0)
+		{
+		char buf_hp1[10],buf_ck1[10];
+		int hp_1,ck_1;
+		hp_1=player1.gethp();
+		ck_1=player1.getchakra();
+		sprintf(buf_hp1, "HP: %d", hp_1);
+		outtextxy(70,130,buf_hp1);
+		sprintf(buf_ck1, "CHAKRA: %d", ck_1);
+		outtextxy(70,140,buf_ck1);
+
+		char buf_hp2[10],buf_ck2[10];
+		int hp_2,ck_2;
+		hp_2=player2.gethp();
+		ck_2=player2.getchakra();
+		sprintf(buf_hp2, "HP: %d", hp_2);
+		outtextxy(470,130,buf_hp2);
+		sprintf(buf_ck2, "CHAKRA: %d", ck_2);
+		outtextxy(470,140,buf_ck2);
+
+		outtextxy(10,345,arr1);
+		outtextxy(170,345,arr2);
+
+		outtextxy(10,420,arr3);
+		outtextxy(170,420,arr4);
+
+		outtextxy(510,345,arr21);
+		outtextxy(370,345,arr11);
+
+		outtextxy(510,420,arr41);
+		outtextxy(370,420,arr31);
+		settextstyle(1,0,2);
+
+
+		outtextxy(334,328,"5.");
+		outtextxy(334,348,"C");
+		outtextxy(334,368,"H");
+		outtextxy(334,388,"A");
+		outtextxy(334,408,"R");
+		outtextxy(334,428,"G");
+		outtextxy(334,448,"E");
+		settextstyle(0,0,1);
+
+		outtextxy(470,120,"Player 2");
+		outtextxy(275,40,"PLAYER 2");
+		outtextxy(205,68,"Choose an attack or charge:");
+		gotoxy(54,5);
+
+		cin>>ch2;
+		switch(ch2)
+		 {
+			case 1 :
+				   if(player2.getchakra()>=player2.atk1)
+				   {
+				   attack_gr2();
+				   player1.sethp(player1.gethp()-player2.atk1);
+				   player2.changechakra(player1.atk1);
+				   }
+				   else
+				   {
+					cout<<"\nChakra Insufficient!"
+					<<"\nYou need to Charge";
+					getch();
+					goto repeat2;
+				   }
+				   break;
+			case 2 :
+				   if(player2.getchakra()>=player2.atk2)
+				   {
+				   attack_gr2();
+				   player1.sethp(player1.gethp()-player2.atk2);
+				   player2.changechakra(player1.atk2);
+				   }
+				   else
+				   {
+					cout<<"\nChakra Insufficient!"
+					<<"\nChoose another attack or Charge";
+					getch();
+					goto repeat2;
+				   }
+				   break;
+			case 3 :
+				   if(player2.getchakra()>=player2.atk3)
+				   {
+				   attack_gr2();
+				   player1.sethp(player1.gethp()-player2.atk3);
+				   player2.changechakra(player1.atk3);
+				   }
+				   else
+				   {
+					cout<<"\nChakra Insufficient!"
+					<<"\nChoose another attack or Charge";
+					getch();
+					goto repeat2;
+				   }
+				   break;
+			case 4 :
+				   if(player2.getchakra()>=player2.atk4)
+				   {
+				   attack_gr2();
+				   player1.sethp(player1.gethp()-player2.atk4);
+				   player2.changechakra(player1.atk4);
+				   }
+				   else
+				   {
+					cout<<"\nChakra Insufficient!"
+					<<"\nChoose another attack or Charge";
+					getch();
+					goto repeat2;
+				   }
+				   break;
+			case 5 : if(player2.getchakra()>=(1.5*player2.atk4))
+				   {
+					int midy = getmaxy()/2;
+					int midx = getmaxx()/2;
+
+					outtextxy(midx-120,midy-115,"Chakra is full...cannot charge");
+					getch();
+					goto x;
+				   }
+				   else
+				   {
+					player2.inc_chakra(player2.atk2);
+					if(player2.getchakra()>1.5*player2.atk4)
+						player2.setchakra(1.5*player2.atk4);
+				   }
+				   break;
+			default  : cout<<"\nInvalid option\n";
+				   getch();
+		 }
+		}
+		else
+			break;
+	}
+	cleardevice();
+	closegraph();
+	char ch;
+	if(player1.gethp()<=0)
+		ch=winnerscr(2);
+	else
+		ch=winnerscr(1);
+	if(ch=='x')
+	{
+		exit(0);
+	}
+	else if(ch=='r')
+	{
+		return;
+	}
+}
+
+void main()
+{
+	int flag=0;
+rep:	int gd=DETECT,gm;
+	initgraph(&gd, &gm,"C:\\TURBOC3\\BGI");
+	cleardevice();
+	if(flag==0)
+	{
+		//home_gr();
+		flag++;
+	}
+	cleardevice();
+	int menu_1;
+	settextstyle(1,0,4);
+	setcolor(9);
+	outtextxy(50,30,"THE BATTLE OF THE FINAL VALLEY");
+	setcolor(15);
+	settextstyle(2,0,6);
+	outtextxy(60,120,"1. Login");
+	outtextxy(60,140,"2. Sign up");
+	outtextxy(60,160,"3. Help");
+	outtextxy(60,180,"4. Leaderboard");
+	outtextxy(60,200,"5. Exit");
+	outtextxy(60,220,"Press Enter after choosing");
+	outtextxy(60,260,"Choice: ");
+	char buf[10];
+	char x[1];
+	int y;
+	x[0]=getch();
+	y=atoi(x);
+	sprintf(buf,"Choice: %d", y);
+	outtextxy(60,260,buf);
+	char q[1];
+	q[0]=getch();
+	if(q[0]==8)
+	{
+		goto rep;
+	}
+	cleardevice();
+	closegraph();
+	menu_1=y;
+	switch(menu_1)
+	{
+		case 1: login();
+			break;
+		case 2: sign_up();
+			break;
+		case 3: help();
+			break;
+		case 4: leaderboard();
+			break;
+		case 5: exit(0);
+			break;
+		default: outtextxy(60,300,"Invalid option!");
+			 getch();
+	}
+	goto rep;
+
+}
+
