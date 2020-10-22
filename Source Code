@@ -2409,7 +2409,7 @@ rep:	int gd=DETECT,gm;
 	cleardevice();
 	if(flag==0)
 	{
-		//home_gr();
+		home_gr();
 		flag++;
 	}
 	cleardevice();
